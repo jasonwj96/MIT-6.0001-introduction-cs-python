@@ -81,7 +81,7 @@ def get_available_letters(letters_guessed: list[str]):
       yet been guessed.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    return sorted(set(ascii_lowercase) - set(letters_guessed))
+    return "".join(sorted(set(ascii_lowercase) - set(letters_guessed)))
 
 
 def hangman(secret_word):
@@ -114,28 +114,46 @@ def hangman(secret_word):
     letters_guessed = list()
 
     while guesses > 0:
-        left_to_guess = abs(len(secret_word) - len(set(secret_word) & set(letters_guessed)))
+        tries = 2
         print(f"The word has {len(secret_word)} letters. it's '{secret_word}'.")
         print(f"You have {guesses} guesses left.")
-        print(
-            f"You have the following letters left to guess:\n"
-            f"{get_available_letters(letters_guessed)}\n")
+        print(f"Available letters: {get_available_letters(letters_guessed)}\n")
 
-        guess = input("Enter a letter:\n")
+        guess = input("Please guess a letter:\n")
         guess = guess.lower()
 
-        while guess not in ascii_lowercase:
-            guess = input("Enter a valid character:\n")
+        if guess not in ascii_lowercase or guess in letters_guessed:
+            while tries > 0:
+                guess = input("Please input a valid character that hasn't been guessed:\n")
+
+                if guess in ascii_lowercase and guess not in letters_guessed:
+                    break
+                else:
+                    if guess in letters_guessed:
+                        print(
+                            f"Oops! You've already guessed that letter. You now have {tries} "
+                            f"warnings")
+
+                    tries = max(0, tries - 1)
+
+                if tries == 0:
+                    break
+
+        if tries == 0:
+            guesses = max(0, guesses - 1)
+            continue
 
         letters_guessed.append(guess)
 
         if guess in secret_word:
             output = " ".join(get_guessed_word(secret_word, letters_guessed))
-            print(output.upper())
+            print(f"Good guess: {output}")
 
             if is_word_guessed(secret_word, letters_guessed):
                 break
         else:
+            output = " ".join(get_guessed_word(secret_word, letters_guessed))
+            print(f"Oops! That letter is not in my word: {output}")
             guesses = max(0, guesses - 1)
 
     if guesses == 0:
