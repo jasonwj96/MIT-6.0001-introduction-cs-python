@@ -74,14 +74,14 @@ def get_guessed_word(secret_word: str, letters_guessed: list[str]):
     return "".join([c if c in letters_guessed else "_" for c in secret_word])
 
 
-def get_available_letters(letters_guessed):
+def get_available_letters(letters_guessed: list[str]):
     '''
     letters_guessed: list (of letters), which letters have been guessed so far
     returns: string (of letters), comprised of letters that represents which letters have not
       yet been guessed.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    return set(letters_guessed)
+    return sorted(set(ascii_lowercase) - set(letters_guessed))
 
 
 def hangman(secret_word):
@@ -112,17 +112,14 @@ def hangman(secret_word):
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     guesses = 6
     letters_guessed = list()
-    output = " ".join("_" * len(secret_word))
 
     while guesses > 0:
         left_to_guess = abs(len(secret_word) - len(set(secret_word) & set(letters_guessed)))
-        print(f"""The word has {len(secret_word)} letters. it's "{secret_word}".
-        You have {guesses} guesses left. You have {left_to_guess} letters left to guess. 
-        """)
-
-        if len(letters_guessed) > 0:
-            print(f"""You have guessed the following letters:
-             {get_available_letters(letters_guessed)}\n""")
+        print(f"The word has {len(secret_word)} letters. it's '{secret_word}'.")
+        print(f"You have {guesses} guesses left.")
+        print(
+            f"You have the following letters left to guess:\n"
+            f"{get_available_letters(letters_guessed)}\n")
 
         guess = input("Enter a letter:\n")
         guess = guess.lower()
@@ -130,9 +127,9 @@ def hangman(secret_word):
         while guess not in ascii_lowercase:
             guess = input("Enter a valid character:\n")
 
-        if guess in secret_word:
-            letters_guessed.append(guess)
+        letters_guessed.append(guess)
 
+        if guess in secret_word:
             output = " ".join(get_guessed_word(secret_word, letters_guessed))
             print(output.upper())
 
