@@ -29,7 +29,7 @@ def load_words():
     line = inFile.readline()
     # wordlist: list of strings
     wordlist = line.split()
-    print("  ", len(wordlist), "words loaded.\n")
+    print(len(wordlist), "words loaded.\n")
     return wordlist
 
 
@@ -113,39 +113,43 @@ def hangman(secret_word):
     guesses = 6
     letters_guessed = list()
 
+    print("Welcome to the game Hangman!")
+    print(f"I am thinking of a word that is {len(secret_word)} letters long.")
+    print(f"it's '{secret_word}'.")
+    print("-" * 50)
+
     while guesses > 0:
-        tries = 2
-        print(f"The word has {len(secret_word)} letters. it's '{secret_word}'.")
+        tries = 3
+
         print(f"You have {guesses} guesses left.")
+        print(f"You have {tries} warnings left.")
         print(f"Available letters: {get_available_letters(letters_guessed)}\n")
 
-        guess = input("Please guess a letter:\n")
-        guess = guess.lower()
+        guess = ""
 
-        if guess not in ascii_lowercase or guess in letters_guessed:
-            while tries > 0:
-                guess = input("Please input a valid character that hasn't been guessed:\n")
+        while tries > 0:
 
-                if guess in ascii_lowercase and guess not in letters_guessed:
-                    break
-                else:
-                    if guess in letters_guessed:
-                        print(
-                            f"Oops! You've already guessed that letter. You now have {tries} "
-                            f"warnings")
+            guess = input("Please guess a letter:\n")
+            guess = guess.lower()
 
-                    tries = max(0, tries - 1)
+            if guess not in ascii_lowercase:
+                tries = max(0, tries - 1)
+                print(f"Please enter a valid letter.")
+                continue
 
-                if tries == 0:
-                    break
+            if guess in letters_guessed:
+                tries = max(0, tries - 1)
+                print(f"Oops! You've already guessed that letter. You now have {tries} warnings.")
+                continue
+            else:
+                break
 
         if tries == 0:
             guesses = max(0, guesses - 1)
             continue
 
-        letters_guessed.append(guess)
-
         if guess in secret_word:
+            letters_guessed.append(guess)
             output = " ".join(get_guessed_word(secret_word, letters_guessed))
             print(f"Good guess: {output}")
 
