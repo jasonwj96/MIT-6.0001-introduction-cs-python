@@ -29,7 +29,7 @@ def load_words():
     line = inFile.readline()
     # wordlist: list of strings
     wordlist = line.split()
-    print(len(wordlist), "words loaded.\n")
+    print(len(wordlist), "words loaded.")
     return wordlist
 
 
@@ -119,32 +119,33 @@ def hangman(secret_word):
     print("-" * 50)
 
     while guesses > 0:
-        tries = 3
+        n_warnings = 3
 
         print(f"You have {guesses} guesses left.")
-        print(f"You have {tries} warnings left.")
         print(f"Available letters: {get_available_letters(letters_guessed)}\n")
 
         guess = ""
 
-        while tries > 0:
+        while n_warnings > 0:
 
             guess = input("Please guess a letter:\n")
-            guess = guess.lower()
+            guess = guess.lower().strip()
 
             if guess not in ascii_lowercase:
-                tries = max(0, tries - 1)
+                n_warnings = max(0, n_warnings - 1)
                 print(f"Please enter a valid letter.")
+                print(f"You have {n_warnings} warnings left.")
                 continue
 
             if guess in letters_guessed:
-                tries = max(0, tries - 1)
-                print(f"Oops! You've already guessed that letter. You now have {tries} warnings.")
+                n_warnings = max(0, n_warnings - 1)
+                print(f"Oops! You've already guessed that letter. You now have {n_warnings} warnings.")
+                print(f"You have {n_warnings} warnings left.")
                 continue
             else:
                 break
 
-        if tries == 0:
+        if n_warnings == 0:
             guesses = max(0, guesses - 1)
             continue
 
@@ -152,18 +153,25 @@ def hangman(secret_word):
             letters_guessed.append(guess)
             output = " ".join(get_guessed_word(secret_word, letters_guessed))
             print(f"Good guess: {output}")
+            print("-" * 50)
 
             if is_word_guessed(secret_word, letters_guessed):
                 break
         else:
             output = " ".join(get_guessed_word(secret_word, letters_guessed))
             print(f"Oops! That letter is not in my word: {output}")
-            guesses = max(0, guesses - 1)
+
+            if guess in ["a", "e", "i", "o", "u"]:
+                guesses = max(0, guesses - 2)
+            else:
+                guesses = max(0, guesses - 1)
 
     if guesses == 0:
         print("You ran out of guesses!.")
     else:
-        print("You guessed the word!.")
+        print(
+            f"Congratulations, you won! \nYour total score for this game is: "
+            f"{guesses * len(set(secret_word))}")
 
 
 # When you've completed your hangman function, scroll down to the bottom
