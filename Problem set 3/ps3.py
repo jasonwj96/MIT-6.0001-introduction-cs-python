@@ -92,8 +92,8 @@ def get_word_score(word, n):
     returns: int >= 0
     """
     
-    pass  # TO DO... Remove this line when you implement this function
-
+    score = sum(SCRABBLE_LETTER_VALUES[c] for c in word.lower() if c in VOWELS or c in CONSONANTS) 
+    return score * max(1, (7 * len(word)) - (3 * (n - len(word))))
 #
 # Make sure you understand how this function works and what it does!
 #
@@ -343,3 +343,4 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
+    print(get_word_score("weed", 6))
