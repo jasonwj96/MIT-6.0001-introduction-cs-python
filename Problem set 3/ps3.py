@@ -11,14 +11,14 @@ import math
 import random
 import string
 
-VOWELS = 'aeiou'
+VOWELS = 'aeiou*'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1,
     'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8,
-    'y': 4, 'z': 10
+    'y': 4, 'z': 10, '*': 0
 }
 
 # -----------------------------------
@@ -143,11 +143,14 @@ def deal_hand(n):
     hand = {}
     num_vowels = int(math.ceil(n / 3))
 
+    hand['*'] = 1
+    num_vowels -= 1
+
     for i in range(num_vowels):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
 
-    for i in range(num_vowels, n):
+    for i in range(num_vowels + 1, n):
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
 
@@ -185,26 +188,26 @@ def update_hand(hand, word):
 #
 def is_valid_word(word, hand, word_list):
     """
-    Returns True if word is in the word_list and is entirely
-    composed of letters in the hand. Otherwise, returns False.
-    Does not mutate hand or word_list.
-   
-    word: string
-    hand: dictionary (string -> int)
-    word_list: list of lowercase strings
-    returns: boolean
+    Returns True if the word is in the word_list and entirely
+    composed of letters in the hand. Wildcards (*) can replace any vowel.
     """
-    if word not in word_list:
-        return False
+    word = word.lower()
 
     hand_copy = hand.copy()
-
     for letter in word:
         if hand_copy.get(letter, 0) == 0:
             return False
         hand_copy[letter] -= 1
 
-    return True
+    if '*' not in word:
+        return word in word_list
+
+    for vowel in VOWELS:
+        possible_word = word.replace('*', vowel)
+        if possible_word in word_list:
+            return True
+
+    return False
 
 
 #
