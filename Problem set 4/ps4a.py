@@ -3,6 +3,9 @@
 # Collaborators:
 # Time Spent: x:xx
 
+from itertools import permutations
+
+
 def get_permutations(sequence):
     '''
     Enumerate all permutations of a given string
@@ -22,19 +25,29 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
+    if len(sequence) == 1:
+        return [sequence]
 
-    pass #delete this line and replace with your code here
+    perm_list = []
+
+    for i, char in enumerate(sequence):
+        remaining = sequence[:i] + sequence[i + 1:]
+
+        for p in get_permutations(remaining):
+            perm_list.append(char + p)
+
+    return perm_list
+
 
 if __name__ == '__main__':
-#    #EXAMPLE
-#    example_input = 'abc'
-#    print('Input:', example_input)
-#    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
-#    print('Actual Output:', get_permutations(example_input))
-    
-#    # Put three example test cases here (for your sanity, limit your inputs
-#    to be three characters or fewer as you will have n! permutations for a 
-#    sequence of length n)
+    #    #EXAMPLE
+    #    example_input = 'abc'
+    #    print('Input:', example_input)
+    #    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
+    #    print('Actual Output:', get_permutations(example_input))
 
-    pass #delete this line and replace with your code here
+    #    # Put three example test cases here (for your sanity, limit your inputs
+    #    to be three characters or fewer as you will have n! permutations for a
+    #    sequence of length n)
 
+    print(get_permutations("abc"))
